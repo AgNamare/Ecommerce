@@ -61,12 +61,6 @@ app.listen(PORT, () => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, "../../client/dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/dist", "index.html"));
-});
 // Routes
 app.use("/api/v1/user/", userRoutes);
 app.use("/api/v1/auth", authRoutes);
@@ -82,6 +76,13 @@ app.use("/api/v1/payment", paymentRoutes);
 app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
+
+// Serve static files from the React frontend app
+app.use(express.static(path.join(__dirname, "../../client/dist")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../client/dist", "index.html"));
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

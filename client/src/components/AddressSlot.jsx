@@ -9,6 +9,7 @@ import { MapPinned } from "lucide-react";
 import CustomSheet from "@/components/CustomSheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import DeliveryForm from "@/forms/DeliveryForm";
+import { LoadScript } from "@react-google-maps/api";
 
 const AddressSlot = ({
   isPopoverOpen,
@@ -99,7 +100,12 @@ const AddressSlot = ({
 
       <CustomSheet isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)}>
         <ScrollArea className="h-[90vh] w-full border-none rounded-md border">
-          <DeliveryForm onSubmit={onCreateNewAddress} />
+          <LoadScript
+            googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+            libraries={["places"]}
+          >
+            <DeliveryForm onSubmit={onCreateNewAddress} />
+          </LoadScript>
         </ScrollArea>
       </CustomSheet>
     </>
