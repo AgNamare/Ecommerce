@@ -22,9 +22,15 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install client dependencies and build client
+      - name: Install and build client
         run: |
           cd client
+          npm install
+          npm run build
+
+      - name: Install and build admin
+        run: |
+          cd admin
           npm install
           npm run build
 
@@ -38,6 +44,11 @@ jobs:
           rm -rf server/public
           mkdir -p server/public
           cp -r client/dist/* server/public/
+
+      - name: Copy admin build to server/public/admin
+        run: |
+          mkdir -p server/public/admin
+          cp -r admin/dist/* server/public/admin/
 
       - name: Zip server for deployment
         run: |

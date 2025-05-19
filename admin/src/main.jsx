@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom/client.js";
 import AppRoutes from "./AppRoutes.jsx";
 import { BrowserRouter as Router } from "react-router-dom";
 import { Toaster } from "sonner";
@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <Router>
+        <Router basename="/admin">
           <QueryClientProvider client={queryClient} contextSharing={true}>
             <AppRoutes />
           </QueryClientProvider>
