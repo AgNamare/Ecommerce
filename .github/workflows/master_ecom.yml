@@ -1,4 +1,4 @@
-# This workflow builds and deploys a Node.js application to Azure Web App.
+# .github/workflows/azure-deploy.yml
 name: Build and deploy Node.js app to Azure Web App - Ecom
 
 on:
@@ -28,17 +28,23 @@ jobs:
           npm install
           npm run build
 
+      - name: Install admin dependencies and build admin
+        run: |
+          cd admin
+          npm install
+          npm run build
+
       - name: Install server dependencies
         run: |
           cd server
           npm install
 
-      - name: Copy client build to server/public
+      - name: Copy client and admin builds to server/public
         run: |
           rm -rf server/public
-          mkdir -p server/public
+          mkdir -p server/public/admin
           cp -r client/dist/* server/public/
-          cp -r admin/dist/* server/public/admin
+          cp -r admin/build/* server/public/admin/
 
       - name: Zip server for deployment
         run: |
@@ -68,7 +74,7 @@ jobs:
           name: node-app
 
       - name: Unzip artifact
-        run: unzip release.zip -d server
+        run: unzip release.zip
 
       - name: Login to Azure
         uses: azure/login@v2
@@ -83,4 +89,4 @@ jobs:
         with:
           app-name: 'Ecom'
           slot-name: 'Production'
-          package: server
+          package: .
