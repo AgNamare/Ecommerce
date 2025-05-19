@@ -10,38 +10,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read #This is required for actions/checkout
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      - name: Install client dependencies and build client
+      - name: npm install, build, and test
         run: |
-          cd client
           npm install
-          npm run build
+          npm run build --if-present
+          npm run test --if-present
 
-      - name: Install server dependencies
-        run: |
-          cd server
-          npm install
-
-      - name: Copy client build to server/public
-        run: |
-          rm -rf server/public
-          mkdir -p server/public
-          cp -r client/dist/* server/public/
-
-      - name: Zip server for deployment
-        run: |
-          cd server
-          zip -r ../release.zip .
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -56,8 +42,8 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write
-      contents: read
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -65,20 +51,20 @@ jobs:
         with:
           name: node-app
 
-      - name: Unzip artifact
-        run: unzip release.zip -d server
-
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_90E42EFA219649C0A0E0DFF7F2288D0B }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7788DD224A1B4C52AFAFA9A16CF6F29F }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7FF3B2D63D984B50BA58C96052290F7C }}
 
-      - name: Deploy to Azure Web App
+      - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'Ecom'
           slot-name: 'Production'
-          package: server
+          package: .
