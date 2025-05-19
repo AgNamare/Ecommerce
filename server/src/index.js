@@ -17,8 +17,8 @@ import categoryRoutes from "./routes/category.routes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 dotenv.config();
 
 console.log(process.env.MONGO_URL);
@@ -78,12 +78,10 @@ app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
 // Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, "../../client/dist")));
-
+app.use(express.static(path.join(__dirname, "public")));
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../client/dist", "index.html"));
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
-
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err);
