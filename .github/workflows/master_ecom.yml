@@ -44,7 +44,8 @@ jobs:
           rm -rf server/public
           mkdir -p server/public/admin
           cp -r client/dist/* server/public/
-          cp -r admin/build/* server/public/admin/
+          cp -r admin/dist/* server/public/admin
+          
 
       - name: Zip server for deployment
         run: |
