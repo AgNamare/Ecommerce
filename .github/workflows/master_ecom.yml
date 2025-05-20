@@ -42,6 +42,9 @@ jobs:
       - name: Copy client and admin builds to server/public
         run: |
           rm -rf server/public
+          mkdir -p server/public/admin
+          cp -r client/dist/* server/public/
+          cp -r admin/dist/* server/public/admin
           
 
       - name: Zip server for deployment
