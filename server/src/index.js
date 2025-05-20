@@ -83,10 +83,7 @@ app.get("/app/*", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "app", "index.html"));
 });
 
-// Optional: Redirect root `/` to `/app`
-app.get("/", (req, res) => {
-  res.redirect("/app");
-});
+
 
 // Error handling
 app.use((err, req, res, next) => {
