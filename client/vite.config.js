@@ -9,9 +9,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/app/', // For root path
-  server: {
-    port: 5174,
-    host: "0.0.0.0",
-  },
+  base: '/app/', 
 });
