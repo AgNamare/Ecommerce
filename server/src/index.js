@@ -77,17 +77,18 @@ app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
-// Serve static files from the React frontend app
-app.use(express.static(path.join(__dirname, "public")));
+// Serve static files
+app.use(express.static(path.join(__dirname, "..", "public")));
+app.use("/admin", express.static(path.join(__dirname, "..", "public", "admin")));
 
-app.use("/admin", express.static(path.join(__dirname, "public", "admin")));
-
+// Handle admin routes
 app.get("/admin/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/admin", "index.html"));
+  res.sendFile(path.join(__dirname, "..", "public", "admin", "index.html"));
 });
 
+// Catch-all for other React routes
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
 // Error handling middleware
 app.use((err, req, res, next) => {
