@@ -1,4 +1,3 @@
-# .github/workflows/azure-deploy.yml
 name: Build and deploy Node.js app to Azure Web App - Ecom
 
 on:
@@ -39,19 +38,46 @@ jobs:
           cd server
           npm install
 
-      - name: Copy client and admin builds to server/public
+      - name: Copy client and admin builds to correct locations
         run: |
+          # Create proper directory structure
           rm -rf server/public
+          mkdir -p server/public/app
           mkdir -p server/public/admin
-          cp -r client/dist/* server/public/app
-          cp -r admin/dist/* server/public/admin
           
+          # Copy built files
+          cp -r client/dist/* server/public/app/
+          cp -r admin/dist/* server/public/admin/
+          
+          # Verify the structure
+          echo "Final server/public structure:"
+          ls -R server/public
+
+      - name: Create web.config for Azure
+        run: |
+          cat <<EOT > server/web.config
+          <configuration>
+            <system.webServer>
+              <handlers>
+                <add name="iisnode" path="server.js" verb="*" modules="iisnode"/>
+              </handlers>
+              <rewrite>
+                <rules>
+                  <rule name="DynamicContent">
+                    <match url="/*" />
+                    <action type="Rewrite" url="server.js"/>
+                  </rule>
+                </rules>
+              </rewrite>
+              <iisnode watchedFiles="*.js;node_modules\*" nodeProcessCommandLine="node.exe" />
+            </system.webServer>
+          </configuration>
+          EOT
 
       - name: Zip server for deployment
         run: |
           cd server
           zip -r ../release.zip ./*
-
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -84,6 +110,7 @@ jobs:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_90E42EFA219649C0A0E0DFF7F2288D0B }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7788DD224A1B4C52AFAFA9A16CF6F29F }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7FF3B2D63D984B50BA58C96052290F7C }}
+          client-secret: ${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -92,3 +119,4 @@ jobs:
           app-name: 'Ecom'
           slot-name: 'Production'
           package: release.zip
+          runtime: 'node|20-lts'
