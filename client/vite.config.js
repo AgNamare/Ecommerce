@@ -10,10 +10,6 @@ export default defineConfig({
     },
   },
   base: '/', // For root path
-  build: {
-    outDir: '../server/public',
-    emptyOutDir: true,
-  }, 
   server: {
     port: 5174,
     host: "0.0.0.0",
