@@ -9,7 +9,11 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/', // For root path
+  base: "/", // For root path
+  build: {
+    outDir: "../server/public",
+    emptyOutDir: true,
+  },
   server: {
     port: 5174,
     host: "0.0.0.0",
