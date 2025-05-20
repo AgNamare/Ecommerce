@@ -22,11 +22,11 @@ import LogisticsInfoPage from "./pages/LogisticsInfoPage";
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/admin/sign-in" element={<AdminLoginPage />} />
+      <Route path="/sign-in" element={<AdminLoginPage />} />
 
       <Route element={<PrivateRoute />}>
         <Route
-          path="/admin/"
+          path="/"
           element={
             <Layout>
               <Homepage />
@@ -34,7 +34,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/products"
+          path="/products"
           element={
             <Layout>
               <ProductsPage />
@@ -42,7 +42,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/products/new-product"
+          path="/products/new-product"
           element={
             <Layout>
               <AddProductPage />
@@ -50,7 +50,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/products/:id"
+          path="/products/:id"
           element={
             <Layout>
               <UpdateProductPage />
@@ -58,7 +58,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/users"
+          path="/users"
           element={
             <Layout>
               <UsersPage />
@@ -66,7 +66,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/users/:id"
+          path="/users/:id"
           element={
             <Layout>
               <UserInfoPage />
@@ -74,7 +74,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/orders"
+          path="/orders"
           element={
             <Layout>
               <OrdersPage />
@@ -82,7 +82,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/logistics"
+          path="/logistics"
           element={
             <Layout>
               <LogisticsPage />
@@ -90,7 +90,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/categories"
+          path="/categories"
           element={
             <Layout>
               <CategoriesPage />
@@ -98,7 +98,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/categories/new"
+          path="/categories/new"
           element={
             <Layout>
               <AddCategoryPage />
@@ -106,7 +106,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/categories/:id"
+          path="/categories/:id"
           element={
             <Layout>
               <UpdateCategoryPage />
@@ -114,7 +114,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/orders/:orderId"
+          path="/orders/:orderId"
           element={
             <Layout>
               <OrderInfoPage />
@@ -122,7 +122,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/logistics/new"
+          path="/logistics/new"
           element={
             <Layout>
               <AddLogisticsPage />
@@ -130,7 +130,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/logistics/:id"
+          path="/logistics/:id"
           element={
             <Layout>
               <LogisticsInfoPage />
@@ -138,7 +138,7 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/admin/sign-up"
+          path="/sign-up"
           element={
             <Layout>
               <AdminRegistrationPage />
