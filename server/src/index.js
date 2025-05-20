@@ -32,15 +32,12 @@ mongoose
   });
 
 const app = express();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
-// Middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// CORS
+// CORS configuration
 const corsOptions = {
   origin: [
     "http://localhost:5173",
@@ -50,10 +47,21 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
 };
+
 app.use(cors(corsOptions));
+
+// Options Preflight Response
 app.options("*", cors(corsOptions));
 
-// API Routes
+const PORT = process.env.PORT || 9000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Routes
 app.use("/api/v1/user/", userRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/admin/products", productRoutes);
@@ -69,23 +77,20 @@ app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
-// Serve static assets
+// Serve static files
+app.use(express.static(path.join(__dirname, "..", "public")));
 app.use("/admin", express.static(path.join(__dirname, "..", "public", "admin")));
-app.use("/app", express.static(path.join(__dirname, "..", "public", "app")));
 
-// Admin panel routing
+// Handle admin routes
 app.get("/admin/*", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "public", "admin", "index.html"));
 });
 
-// Client app routing
-app.get("/app/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "public", "app", "index.html"));
+// Catch-all for other React routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
-
-
-
-// Error handling
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err);
   const statusCode = err.statusCode || 500;
@@ -97,8 +102,4 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Start server
-const PORT = process.env.PORT || 9000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Anything that doesn't match an API route gets sent to React
