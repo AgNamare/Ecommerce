@@ -1,3 +1,4 @@
+# .github/workflows/azure-deploy.yml
 name: Build and deploy Node.js app to Azure Web App - Ecom
 
 on:
@@ -20,36 +21,37 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
-          cache: 'npm'  # Optional: enables caching for faster installs
 
       - name: Install client dependencies and build client
         run: |
           cd client
-          npm ci
+          npm install
           npm run build
 
       - name: Install admin dependencies and build admin
         run: |
           cd admin
-          npm ci
+          npm install
           npm run build
 
       - name: Install server dependencies
         run: |
           cd server
-          npm ci
+          npm install
 
       - name: Copy client and admin builds to server/public
         run: |
           rm -rf server/public
           mkdir -p server/public/admin
           cp -r client/dist/* server/public/
-          cp -r admin/dist/* server/public/admin/
+          cp -r admin/dist/* server/public/admin
+          
 
       - name: Zip server for deployment
         run: |
           cd server
-          zip -r ../release.zip .
+          zip -r ../release.zip ./*
+
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
