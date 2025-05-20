@@ -21,32 +21,31 @@ jobs:
         with:
           node-version: "20.x"
 
-      - name: Install client dependencies and build client
+      - name: Install client dependencies and build
         run: |
           cd client
-          npm install
+          npm ci
           npm run build
 
-      - name: Install admin dependencies and build admin
+      - name: Install admin dependencies and build
         run: |
           cd admin
-          npm install
+          npm ci
           npm run build
 
       - name: Install server dependencies
         run: |
           cd server
-          npm install
+          npm ci
 
-      - name: Copy client and admin builds to server/public
+      - name: Copy builds to server/public
         run: |
-          rm -rf server/public
           mkdir -p server/public/app
           mkdir -p server/public/admin
           cp -r client/dist/* server/public/app/
           cp -r admin/dist/* server/public/admin/
 
-      - name: Create web.config for Azure
+      - name: Create web.config for Azure App Service (Windows only)
         run: |
           cat <<EOT > server/web.config
           <configuration>
@@ -67,41 +66,40 @@ jobs:
           </configuration>
           EOT
 
-      - name: Zip server for deployment
+      - name: Zip deployment package
         run: |
           cd server
           zip -r ../release.zip .
 
-      - name: Upload artifact for deployment job
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
-          name: node-app
+          name: release
           path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: "Production"
+      name: Production
 
     steps:
-      - name: Download artifact from build job
+      - name: Download deployment package
         uses: actions/download-artifact@v4
         with:
-          name: node-app
+          name: release
+          path: .
 
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_90E42EFA219649C0A0E0DFF7F2288D0B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7788DD224A1B4C52AFAFA9A16CF6F29F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7FF3B2D63D984B50BA58C96052290F7C }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
           client-secret: ${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: "Ecom"
-          slot-name: "Production"
           package: release.zip
