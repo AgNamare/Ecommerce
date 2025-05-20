@@ -21,85 +21,102 @@ jobs:
         with:
           node-version: "20.x"
 
-      - name: Install client dependencies and build
+      - name: Install client dependencies and build client
         run: |
           cd client
-          npm ci
+          npm install
           npm run build
 
-      - name: Install admin dependencies and build
+      - name: Install admin dependencies and build admin
         run: |
           cd admin
-          npm ci
+          npm install
           npm run build
 
       - name: Install server dependencies
         run: |
           cd server
-          npm ci
+          npm install
 
-      - name: Copy builds to server/public
+      - name: Copy client and admin builds to correct locations
         run: |
+          # Create proper directory structure
+          rm -rf server/public
           mkdir -p server/public/app
           mkdir -p server/public/admin
+
+          # Copy built files
           cp -r client/dist/* server/public/app/
           cp -r admin/dist/* server/public/admin/
 
-      - name: Create web.config for Azure App Service (Windows only)
+          # Verify the structure
+          echo "Final server/public structure:"
+          ls -R server/public
+
+      - name: Create web.config for Azure
         run: |
           cat <<EOT > server/web.config
           <configuration>
             <system.webServer>
               <handlers>
-                <add name="iisnode" path="index.js" verb="*" modules="iisnode"/>
+                <add name="iisnode" path="server.js" verb="*" modules="iisnode"/>
               </handlers>
               <rewrite>
                 <rules>
                   <rule name="DynamicContent">
-                    <match url=".*" />
-                    <action type="Rewrite" url="index.js"/>
+                    <match url="/*" />
+                    <action type="Rewrite" url="server.js"/>
                   </rule>
                 </rules>
               </rewrite>
-              <iisnode watchedFiles="*.js;node_modules\\*" nodeProcessCommandLine="node.exe" />
+              <iisnode watchedFiles="*.js;node_modules\*" nodeProcessCommandLine="node.exe" />
             </system.webServer>
           </configuration>
           EOT
 
-      - name: Zip deployment package
+      - name: Zip server for deployment
         run: |
           cd server
-          zip -r ../release.zip .
+          zip -r ../release.zip ./*
 
-      - name: Upload artifact for deployment
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: release
-          path: release.zip
+          name: node-app
+          path: server
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: Production
+      name: "Production"
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    permissions:
+      id-token: write
+      contents: read
 
     steps:
-      - name: Download deployment package
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: release
-          path: .
+          name: node-app
+
+      - name: Unzip artifact
+        run: unzip release.zip
 
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_90E42EFA219649C0A0E0DFF7F2288D0B }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7788DD224A1B4C52AFAFA9A16CF6F29F }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7FF3B2D63D984B50BA58C96052290F7C }}
           client-secret: ${{ secrets.AZUREAPPSERVICE_CLIENTSECRET }}
 
       - name: Deploy to Azure Web App
+        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: "Ecom"
+          slot-name: "Production"
           package: release.zip
+          runtime: "node|20-lts"
