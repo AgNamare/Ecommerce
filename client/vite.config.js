@@ -11,7 +11,7 @@ export default defineConfig({
   },
   base: '/admin/',  // change to '/admin/' or '/app/' based on your use case
   build: {
-    outDir: path.resolve(__dirname, "../public/admin"), // change as needed
-    emptyOutDir: true, // optional: clears outDir before building
+    outDir: '../server/public/app',
+    emptyOutDir: true
   },
 });

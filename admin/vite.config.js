@@ -10,8 +10,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  build: {
-    outDir: path.resolve(__dirname, "../server/public/admin"), 
-    emptyOutDir: true, 
+   build: {
+    outDir: '../server/public/admin',
+    emptyOutDir: true
   },
 });

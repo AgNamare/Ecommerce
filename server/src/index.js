@@ -68,20 +68,16 @@ app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
 // Serve static files from client/build
-app.use(express.static(path.join(__dirname, '../../client/build')));
-app.use('/admin', express.static(path.join(__dirname, '../../admin/build')));
-
-// Fallback for client routes
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
+app.use(express.static(path.join(__dirname, "public/app")));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/app/index.html"));
 });
 
-// Fallback for admin panel
-app.get('/admin/*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../admin/build', 'index.html'));
+// Serve admin panel
+app.use("/admin", express.static(path.join(__dirname, "public/admin")));
+app.get("/admin/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public/admin/index.html"));
 });
-
-
 
 // Error handling
 app.use((err, req, res, next) => {
