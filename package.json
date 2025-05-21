@@ -15,9 +15,9 @@
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "start": "node ./server/src/index.js",
-    "build": "cd client && npm install && npm run build && cd ../admin && npm install && npm run build && cd ../server && npm install"
-  },
+  "build": "cd client && npm install && npm run build && cd ../admin && npm install && npm run build && cd ../server && npm install",
+  "start": "node ./server/src/index.js"
+},
   "engines": {
     "node": "18.x"
   }

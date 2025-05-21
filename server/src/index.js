@@ -67,18 +67,18 @@ app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
-// Serve static assets
-app.use("/admin", express.static(path.join(__dirname, "../..", "public", "admin")));
-app.use("/app", express.static(path.join(__dirname, "../..", "public", "app")));
+// Serve static files from client/build
+app.use(express.static(path.join(__dirname, '../../client/build')));
+app.use('/admin', express.static(path.join(__dirname, '../../admin/build')));
 
-// Admin panel routing
-app.get("/admin/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../..", "public", "admin", "index.html"));
+// Fallback for client routes
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
 });
 
-// Client app routing
-app.get("/app/*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../..", "public", "app", "index.html"));
+// Fallback for admin panel
+app.get('/admin/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../../admin/build', 'index.html'));
 });
 
 
