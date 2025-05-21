@@ -1,0 +1,24 @@
+{
+  "name": "ecom",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/AgNamare/Ecommerce#readme",
+  "bugs": {
+    "url": "https://github.com/AgNamare/Ecommerce/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AgNamare/Ecommerce.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+  "build": "cd client && npm install && npm run build && cd ../admin && npm install && npm run build && cd ../server && npm install",
+  "start": "node ./server/src/index.js"
+},
+  "engines": {
+    "node": "18.x"
+  }
+}

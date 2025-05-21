@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font: Lato, sans-serif;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Add this to your global CSS file or a CSS module */
+.best-sellers-carousel {
+  .embla__container {
+    display: flex;
+    width: 100%; /* Ensure the container takes the full width */
+  }
+
+  .embla__slide {
+    flex: 0 0 20%; /* 100% / 5 = 20% width per item */
+    box-sizing: border-box; /* Include padding and border in element's total width and height */
+    padding: 0 8px; /* Optional: Adjust spacing between items */
+  }
+
+  /* Adjust the arrow button styles if needed */
+  .embla__button {
+    background-color: #000; /* Example: adjust according to your design */
+    color: #fff;
+    border-radius: 50%;
+    height: 40px; /* Adjust button size */
+    width: 40px;
+  }
+}
+
+/* Hide scrollbar in Tailwind CSS */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
+}
