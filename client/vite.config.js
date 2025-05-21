@@ -11,7 +11,7 @@ export default defineConfig({
   },
   base: '/admin/',  // change to '/admin/' or '/app/' based on your use case
   build: {
-    outDir: '../public/app',
+    outDir: '../server/public/app',
     emptyOutDir: true
   },
 });
