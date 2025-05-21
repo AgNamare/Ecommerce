@@ -16,7 +16,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./server/src/index.js",
-    "build": "cd client && npm install && npm run build"
+    "build": "cd client && npm install && npm run build && cd ../admin && npm install && npm run build && cd ../server && npm install"
   },
   "engines": {
     "node": "18.x"
