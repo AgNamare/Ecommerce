@@ -11,7 +11,7 @@ export default defineConfig({
   },
 
   build: {
-    outDir: '../public/app',
+    outDir: '../server/src/public/app',
     emptyOutDir: true,
     manifest: true
   },

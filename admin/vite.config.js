@@ -11,8 +11,7 @@ export default defineConfig({
     },
   },
    build: {
-    outDir: '../public/admin',
-    emptyOutDir: true,
-    manifest: true
+    outDir: '../server/src/publicadmin',
+    emptyOutDir: true
   },
 });
