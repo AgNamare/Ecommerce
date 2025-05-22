@@ -1,28 +1,13 @@
 {
-  "name": "ecom",
-  "version": "1.0.0",
-  "description": "",
-  "homepage": "https://github.com/AgNamare/Ecommerce#readme",
-  "bugs": {
-    "url": "https://github.com/AgNamare/Ecommerce/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AgNamare/Ecommerce.git"
-  },
-  "license": "ISC",
-  "author": "",
-  "type": "commonjs",
+  "name": "your-app",
   "scripts": {
-    "prebuild": "rm -rf server/public && mkdir -p server/public",
-    "build:client": "cd client && npm ci && npm run build && cd .. && cp -r client/dist server/public/app",
-    "build:admin": "cd admin && npm ci && npm run build && cd .. && cp -r admin/dist server/public/admin",
-    "build:server": "cd server && npm ci && cd ..",
-    "build": "npm run prebuild && npm run build:client && npm run build:admin && npm run build:server",
-    "start": "node server/src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run build:client && npm run build:admin && npm run build:server",
+    "build:client": "cd client && npm install && npm run build && cd .. && mkdir -p server/public/app && cp -r client/dist/* server/public/app",
+    "build:admin": "cd admin && npm install && npm run build && cd .. && mkdir -p server/public/admin && cp -r admin/dist/* server/public/admin",
+    "build:server": "cd server && npm install && cd ..",
+    "start": "node server/src/index.js"
   },
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   }
 }

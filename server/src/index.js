@@ -17,6 +17,7 @@ import categoryRoutes from "./routes/category.routes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
+import { fileURLToPath } from 'url';
 dotenv.config();
 
 console.log(process.env.MONGO_URL);
@@ -49,7 +50,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
-const __dirname = path.resolve();
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // API Routes
 app.use("/api/v1/user/", userRoutes);
@@ -67,37 +68,17 @@ app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
-app.use('/app', express.static(path.join(__dirname, 'public/app'), {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.js')) {
-      res.set('Content-Type', 'application/javascript');
-    }
-    if (path.endsWith('.css')) {
-      res.set('Content-Type', 'text/css');
-    }
-  }
-}));
-
-app.use('/admin', express.static(path.join(__dirname, 'public/admin'), {
-  setHeaders: (res, path) => {
-    if (path.endsWith('.js')) {
-      res.set('Content-Type', 'application/javascript');
-    }
-    if (path.endsWith('.css')) {
-      res.set('Content-Type', 'text/css');
-    }
-  }
-}));
-
-// Client-side routing fallback (MUST come after static files)
-app.get(['/app', '/app/*'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/app/index.html'));
+// Serve static files
+app.use(express.static(path.join(__dirname, '../../public/app')));
+app.use('/admin', express.static(path.join(__dirname, '../../public/admin')));
+// Client-side routing fallback
+app.get(['/', '/*'], (req, res) => {
+  res.sendFile(path.join(__dirname, '../../public/app/index.html'));
 });
 
 app.get(['/admin', '/admin/*'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/admin/index.html'));
+  res.sendFile(path.join(__dirname, '../../public/admin/index.html'));
 });
-
 
 // Error handling
 app.use((err, req, res, next) => {

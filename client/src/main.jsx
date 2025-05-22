@@ -32,7 +32,7 @@ const RootApp = () => {
   return (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <Router basename="/app">
+        <Router >
           <QueryClientProvider client={queryClient} contextSharing={true}>
             <AppRoutes />
           </QueryClientProvider>
