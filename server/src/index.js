@@ -67,18 +67,36 @@ app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
-app.use(express.static(path.join(__dirname, 'public/app')));
-app.use('/admin', express.static(path.join(__dirname, 'public/admin')));
+app.use('/app', express.static(path.join(__dirname, 'public/app'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.set('Content-Type', 'application/javascript');
+    }
+    if (path.endsWith('.css')) {
+      res.set('Content-Type', 'text/css');
+    }
+  }
+}));
 
-// Client-side routing fallback
-app.get(['/', '/app', '/app/*'], (req, res) => {
+app.use('/admin', express.static(path.join(__dirname, 'public/admin'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.set('Content-Type', 'application/javascript');
+    }
+    if (path.endsWith('.css')) {
+      res.set('Content-Type', 'text/css');
+    }
+  }
+}));
+
+// Client-side routing fallback (MUST come after static files)
+app.get(['/app', '/app/*'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public/app/index.html'));
 });
 
 app.get(['/admin', '/admin/*'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public/admin/index.html'));
 });
-
 
 
 // Error handling
