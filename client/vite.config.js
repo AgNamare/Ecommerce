@@ -9,7 +9,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/',  
+  base: '/app',  
   build: {
     outDir: '../public/app',
     emptyOutDir: true
