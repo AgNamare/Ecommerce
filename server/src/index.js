@@ -17,6 +17,7 @@ import categoryRoutes from "./routes/category.routes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
+import { fileURLToPath } from "url";
 dotenv.config();
 
 console.log(process.env.MONGO_URL);
@@ -49,7 +50,9 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
-const __dirname = path.resolve();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 
 // API Routes
 app.use("/api/v1/user/", userRoutes);
@@ -76,7 +79,8 @@ app.use("/admin", express.static(path.join(__dirname, "../public/admin")));
 app.get("/admin/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/admin/index.html"));
 });
-app.get("/*", (req, res) => {
+
+app.get("/app/*", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/app/index.html"));
 });
 
