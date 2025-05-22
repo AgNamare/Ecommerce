@@ -9,11 +9,9 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-
-  build: {
-    outDir: '../server/src/public/app',
-    emptyOutDir: true,
-    manifest: true
-  },
   base: '/app/',  
+  build: {
+    outDir: '../server/public/app',
+    emptyOutDir: true
+  },
 });
