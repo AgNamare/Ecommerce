@@ -10,8 +10,4 @@ export default defineConfig({
     },
   },
   base: '/app/',  
-  build: {
-    outDir: '../public/app',
-    emptyOutDir: true
-  },
 });
