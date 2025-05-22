@@ -69,15 +69,15 @@ app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
 // Serve static files
-app.use(express.static(path.join(__dirname, '../../public/app')));
-app.use('/admin', express.static(path.join(__dirname, '../../public/admin')));
+app.use(express.static(path.join(__dirname, 'public/app')));
+app.use('/admin', express.static(path.join(__dirname, 'public/admin')));
 // Client-side routing fallback
 app.get(['/', '/*'], (req, res) => {
-  res.sendFile(path.join(__dirname, '../../public/app/index.html'));
+  res.sendFile(path.join(__dirname, 'public/app/index.html'));
 });
 
 app.get(['/admin', '/admin/*'], (req, res) => {
-  res.sendFile(path.join(__dirname, '../../public/admin/index.html'));
+  res.sendFile(path.join(__dirname, 'public/admin/index.html'));
 });
 
 // Error handling
