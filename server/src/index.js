@@ -69,7 +69,7 @@ app.use("/api/v1/orders", orderRoutes);
 
 // Serve static files from client/build
 app.use(express.static(path.join(__dirname, "public/app")));
-app.get("/", (req, res) => {
+app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "public/app/index.html"));
 });
 
