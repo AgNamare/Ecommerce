@@ -50,7 +50,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const __dirname = path.resolve()
 
 // API Routes
 app.use("/api/v1/user/", userRoutes);
