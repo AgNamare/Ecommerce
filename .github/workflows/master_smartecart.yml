@@ -1,4 +1,4 @@
-name: Build and deploy MERN app to Azure
+name: Build and Deploy MERN Stack
 
 on:
   push:
@@ -7,63 +7,61 @@ on:
 
 env:
   NODE_ENV: production
-  WEBSITE_NODE_DEFAULT_VERSION: '20-lts'
+  WEBSITE_NODE_DEFAULT_VERSION: '20.x'
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     # Checkout code
     - uses: actions/checkout@v4
-    
-    # Setup Node.js
-    - name: Setup Node.js 20.x
+
+    # Set up Node.js
+    - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
         node-version: '20.x'
         cache: 'npm'
-    
+
     # Install dependencies
     - name: Install root dependencies
       run: npm install
-      
+
     - name: Install client dependencies
-      run: cd client && npm install
-      
+      run: npm install
+      working-directory: client
+
     - name: Install admin dependencies
-      run: cd admin && npm install
-    
-    # Build applications and manually copy files
-    - name: Build client app
-      run: |
-        cd client
-        npm run build
-        # Create target directory if it doesn't exist
-        mkdir -p ../server/public/app
-        # Copy built files to server directory
-        cp -r dist/* ../server/public/app/
-        echo "Client build complete. Contents:"
-        ls -la ../server/public/app
-    
-    - name: Build admin app
-      run: |
-        cd admin
-        npm run build
-        # Create target directory if it doesn't exist
-        mkdir -p ../server/public/admin
-        # Copy built files to server directory
-        cp -r dist/* ../server/public/admin/
-        echo "Admin build complete. Contents:"
-        ls -la ../server/public/admin
-    
+      run: npm install
+      working-directory: admin
+
+    - name: Install server dependencies
+      run: npm install
+      working-directory: server
+
+    # Build applications
+    - name: Build client
+      run: npm run build
+      working-directory: client
+
+    - name: Build admin
+      run: npm run build
+      working-directory: admin
+
     - name: Build server
-      run: |
-        cd server
-        npm run build
-        echo "Server build complete. Contents:"
-        ls -la dist
-    
+      run: npm run build
+      working-directory: server
+
+    # Verify builds
+    - name: Verify client build
+      run: ls -la
+      working-directory: client/dist
+
+    - name: Verify admin build
+      run: ls -la
+      working-directory: admin/dist
+
     # Prepare deployment package
     - name: Create deployment package
       run: |
@@ -71,10 +69,15 @@ jobs:
         cp -r server/dist/* deployment-package/
         cp server/package.json deployment-package/
         cp server/package-lock.json deployment-package/
-        cp -r server/public deployment-package/
+        
+        # Create public directory structure
+        mkdir -p deployment-package/public
+        cp -r client/dist/* deployment-package/public/app/
+        cp -r admin/dist/* deployment-package/public/admin/
+        
         echo "Deployment package contents:"
         ls -la deployment-package
-    
+
     # Deploy to Azure
     - name: Login to Azure
       uses: azure/login@v1
@@ -82,7 +85,7 @@ jobs:
         client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3C6293E2CF044177A7743A13946B94CA }}
         tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F80D5EA40E3B4EE9B55C6E12A6AD5D84 }}
         subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DDF609657E0740BE9339F398DFD5CC9E }}
-    
+
     - name: Deploy to Azure Web App
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
@@ -92,14 +95,14 @@ jobs:
         package: 'deployment-package'
         clean: true
         scm-type: none
-    
+
     # Verify deployment
-    - name: Verify client app deployment
+    - name: Verify client deployment
       run: |
         echo "Testing client app at ${{ steps.deploy-to-webapp.outputs.webapp-url }}/app"
         curl -s ${{ steps.deploy-to-webapp.outputs.webapp-url }}/app | grep "root" || echo "Client app verification failed"
-    
-    - name: Verify admin app deployment
+
+    - name: Verify admin deployment
       run: |
         echo "Testing admin app at ${{ steps.deploy-to-webapp.outputs.webapp-url }}/admin"
         curl -s ${{ steps.deploy-to-webapp.outputs.webapp-url }}/admin | grep "root" || echo "Admin app verification failed"
