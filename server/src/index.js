@@ -17,10 +17,10 @@ import categoryRoutes from "./routes/category.routes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
-import { fileURLToPath } from 'url';
 dotenv.config();
 
 console.log(process.env.MONGO_URL);
+console.log
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
@@ -70,8 +70,10 @@ app.use("/api/v1/orders", orderRoutes);
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public/app')));
+app.use('/app', express.static(path.join(__dirname, 'public/app')));
 app.use('/admin', express.static(path.join(__dirname, 'public/admin')));
-// Client-side routing fallback
+
+// Then apply the SPA fallback
 app.get(['/app', '/app/*'], (req, res) => {
   res.sendFile(path.join(__dirname, 'public/app/index.html'));
 });
