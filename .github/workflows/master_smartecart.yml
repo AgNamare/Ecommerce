@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy Node.js app to Azure Web App - SmartEcart
 
 on:
@@ -10,25 +13,26 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      - name: Install and build all apps
+      - name: npm install, build, and test
         run: |
-          npm ci
-          npm run build
+          npm install
+          npm run build --if-present
+          npm run test --if-present
 
-      - name: Zip server folder for deployment
-        run: cd server && zip -r ../release.zip . && cd ..
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
 
-      - name: Upload artifact for deployment
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
@@ -41,29 +45,30 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write
-      contents: read
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
-      - name: Download artifact
+      - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: node-app
 
-      - name: Unzip artifact
-        run: unzip release.zip -d server
-
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3C6293E2CF044177A7743A13946B94CA }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F80D5EA40E3B4EE9B55C6E12A6AD5D84 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DDF609657E0740BE9339F398DFD5CC9E }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CBDDAFAA241947DE87589DAD973B526B }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A764A1BDF02B4B43B2C86284A6312AFE }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DF2A31850F8B4C55A777C4955870C0CE }}
 
-      - name: Deploy to Azure Web App
+      - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'SmartEcart'
           slot-name: 'Production'
-          package: release.zip
+          package: .
+          
