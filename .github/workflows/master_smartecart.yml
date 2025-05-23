@@ -34,11 +34,15 @@ jobs:
     - name: Install admin dependencies
       run: cd admin && npm install
     
-    # Build applications
+    # Build applications and manually copy files
     - name: Build client app
       run: |
         cd client
         npm run build
+        # Create target directory if it doesn't exist
+        mkdir -p ../server/public/app
+        # Copy built files to server directory
+        cp -r dist/* ../server/public/app/
         echo "Client build complete. Contents:"
         ls -la ../server/public/app
     
@@ -46,6 +50,10 @@ jobs:
       run: |
         cd admin
         npm run build
+        # Create target directory if it doesn't exist
+        mkdir -p ../server/public/admin
+        # Copy built files to server directory
+        cp -r dist/* ../server/public/admin/
         echo "Admin build complete. Contents:"
         ls -la ../server/public/admin
     
@@ -76,6 +84,7 @@ jobs:
         subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DDF609657E0740BE9339F398DFD5CC9E }}
     
     - name: Deploy to Azure Web App
+      id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
       with:
         app-name: 'SmartEcart'
