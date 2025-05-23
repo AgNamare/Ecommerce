@@ -70,5 +70,5 @@ jobs:
         with:
           app-name: 'SmartEcart'
           slot-name: 'Production'
-          package: .
+          package: server
           
