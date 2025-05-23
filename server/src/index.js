@@ -69,17 +69,17 @@ app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
 // Serve static files
-app.use(express.static(path.join(__dirname, 'public/app')));
-app.use('/app', express.static(path.join(__dirname, 'public/app')));
-app.use('/admin', express.static(path.join(__dirname, 'public/admin')));
+// Serve static frontend
+app.use('/app', express.static(path.join(__dirname, '../public/app')));
+app.use('/admin', express.static(path.join(__dirname, '../public/admin')));
 
-// Then apply the SPA fallback
-app.get(['/app', '/app/*'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/app/index.html'));
+// Fallback to index.html for SPA
+app.get('/app/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/app/index.html'));
 });
 
-app.get(['/admin', '/admin/*'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/admin/index.html'));
+app.get('/admin/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/admin/index.html'));
 });
 
 // Error handling

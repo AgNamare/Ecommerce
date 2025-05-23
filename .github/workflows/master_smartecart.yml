@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Set up Node.js
@@ -19,22 +19,22 @@ jobs:
         with:
           node-version: '20.x'
 
-      - name: Install dependencies
+      - name: Install Root Dependencies
         run: npm ci
 
-      - name: Build apps (client, admin, server)
+      - name: Build Client, Admin, and Prepare Server
         run: npm run build
 
-      - name: Zip server directory for deployment
+      - name: Zip the Server Directory for Deployment
         run: |
           cd server
           zip -r ../release.zip .
         shell: bash
 
-      - name: Upload build artifact
+      - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: node-server-app
+          name: server-artifact
           path: release.zip
 
   deploy:
@@ -42,12 +42,12 @@ jobs:
     needs: build
 
     steps:
-      - name: Download artifact
+      - name: Download Build Artifact
         uses: actions/download-artifact@v4
         with:
-          name: node-server-app
+          name: server-artifact
 
-      - name: Azure login
+      - name: Azure Login
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CBDDAFAA241947DE87589DAD973B526B }}
