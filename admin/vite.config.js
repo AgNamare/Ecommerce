@@ -11,7 +11,14 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "../server/public/admin",
+    outDir: '../server/public/admin',
     emptyOutDir: true,
-  },
+    rollupOptions: {
+      output: {
+        assetFileNames: 'assets/[name].[hash].[ext]',
+        chunkFileNames: 'assets/[name].[hash].js',
+        entryFileNames: 'assets/[name].[hash].js'
+      }
+    }
+  }
 });

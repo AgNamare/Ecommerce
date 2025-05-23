@@ -9,9 +9,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/app/',  
+  base: "/app/",
   build: {
-    outDir: '../server/public/app',
-    emptyOutDir: true
+    outDir: "../server/public/app",
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        assetFileNames: "assets/[name].[hash].[ext]",
+        chunkFileNames: "assets/[name].[hash].js",
+        entryFileNames: "assets/[name].[hash].js",
+      },
+    },
   },
 });
