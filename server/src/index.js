@@ -68,16 +68,17 @@ app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public/app')));
-app.use('/admin', express.static(path.join(__dirname, 'public/admin')));
-// Client-side routing fallback
-app.get(['/', '/*'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/app/index.html'));
+app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join(__dirname, '../admin/dist')));
+
+// Client app
+app.get('/app*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
-app.get(['/admin', '/admin/*'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/admin/index.html'));
+// Admin app
+app.get('/admin*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../admin/dist/index.html'));
 });
 
 // Error handling
