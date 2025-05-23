@@ -17,7 +17,7 @@ import categoryRoutes from "./routes/category.routes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
-import { fileURLToPath } from 'url';
+import { fileURLToPath } from "url";
 dotenv.config();
 
 console.log(process.env.MONGO_URL);
@@ -50,7 +50,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
-const __dirname = path.resolve()
+const __dirname = path.resolve();
 
 // API Routes
 app.use("/api/v1/user/", userRoutes);
@@ -68,17 +68,16 @@ app.use("/api/v1/addresses", addressRoutes);
 app.use("/api/v1/checkout", checkoutRoutes);
 app.use("/api/v1/orders", orderRoutes);
 
-app.use(express.static(path.join(__dirname, '../client/dist')));
-app.use(express.static(path.join(__dirname, '../admin/dist')));
-
-// Client app
-app.get('/app*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+// Serve static files
+app.use(express.static(path.join(__dirname, "public/app")));
+app.use("/admin", express.static(path.join(__dirname, "public/admin")));
+// Client-side routing fallback
+app.get(["/app", "/app/*"], (req, res) => {
+  res.sendFile(path.join(__dirname, "public/app/index.html"));
 });
 
-// Admin app
-app.get('/admin*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../admin/dist/index.html'));
+app.get(["/admin", "/admin/*"], (req, res) => {
+  res.sendFile(path.join(__dirname, "public/admin/index.html"));
 });
 
 // Error handling
