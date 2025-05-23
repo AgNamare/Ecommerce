@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy Node.js app to Azure Web App - SmartEcart
 
 on:
@@ -9,66 +6,63 @@ on:
       - master
   workflow_dispatch:
 
+env:
+  NODE_ENV: production
+  WEBSITE_NODE_DEFAULT_VERSION: '20-lts'
+
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read #This is required for actions/checkout
-
+    
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20.x'
-
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
-
-      - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v4
-        with:
-          name: node-app
-          path: release.zip
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20.x'
+    
+    - name: Install dependencies and build
+      run: |
+        npm install
+        npm run build
+        
+    - name: Create deployment package
+      run: |
+        zip -r release.zip . -x '*.git*' '*.github*' 'node_modules*'
+        
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: node-app
+        path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build-and-deploy
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-      contents: read #This is required for actions/checkout
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: node-app
+    - name: Download artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: node-app
 
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
+    - name: Unzip package
+      run: unzip release.zip -d deployment-package
       
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3C6293E2CF044177A7743A13946B94CA }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F80D5EA40E3B4EE9B55C6E12A6AD5D84 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DDF609657E0740BE9339F398DFD5CC9E }}
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_3C6293E2CF044177A7743A13946B94CA }}
+        tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F80D5EA40E3B4EE9B55C6E12A6AD5D84 }}
+        subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_DDF609657E0740BE9339F398DFD5CC9E }}
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'SmartEcart'
-          slot-name: 'Production'
-          package: .
-          
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'SmartEcart'
+        slot-name: 'Production'
+        package: 'deployment-package'
