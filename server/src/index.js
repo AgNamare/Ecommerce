@@ -20,7 +20,8 @@ import path from "path";
 dotenv.config();
 
 console.log(process.env.MONGO_URL);
-console.log
+
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
