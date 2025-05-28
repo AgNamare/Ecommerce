@@ -14,6 +14,7 @@
   "author": "",
   "type": "commonjs",
   "scripts": {
+    "install": "cd client && npm ci && cd ../admin && npm ci && cd ../server && npm ci && cd ..",
     "build:client": "cd client && npm ci && npm run build && cd .. && cp -r client/dist server/public/app",
     "build:admin": "cd admin && npm ci && npm run build && cd .. && cp -r admin/dist server/public/admin",
     "build:server": "cd server && npm ci && cd ..",
